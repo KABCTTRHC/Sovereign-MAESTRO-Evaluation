@@ -1,0 +1,80 @@
+// ==============================================================================
+// CYBER-PHYSICAL AI SYSTEM: ZERO-COPY SERIALIZATION SCHEMA
+// Purpose: Defines the memory layout for the C++ Engine to communicate with the Android Shell.
+// Paradigm: Zero-Copy, No Garbage Collection, Q16.16 Math Translation.
+// ==============================================================================
+
+namespace bsgsystem.podrick.telemetry;
+
+// ------------------------------------------------------------------------------
+// 1. THE ACTION ENUMS (Wave Function Collapse States)
+// ------------------------------------------------------------------------------
+// Defines the exact discrete actions MAESTRO and THE GOVERNOR can take.
+enum ActionCode : byte {
+  MONITOR = 0,   // System stable, continue observation.
+  TUNE = 1,      // Minor QUBO adjustment required.
+  THROTTLE = 2,  // High entropy detected, throttle operations.
+  HALT = 3,      // T_TTP crossed. Trigger LOTOS.
+  VETO = 4       // Novikov Veto executed by THE GOVERNOR.
+}
+
+// ------------------------------------------------------------------------------
+// 2. THE Q16.16 FIXED-POINT DATA STRUCTURE
+// ------------------------------------------------------------------------------
+// Since FlatBuffers doesn't natively support Q16.16 fixed-point types,
+// we pass them as standard 32-bit integers (int32). The Kotlin UI will handle
+// the bit-shifting to display them as human-readable decimals.
+struct Q16_16 {
+  value: int32;
+}
+
+// ------------------------------------------------------------------------------
+// 3. THE FOUNDATIONAL TENSOR (Root Inputs)
+// ------------------------------------------------------------------------------
+table FoundationalTensor {
+  machine_prob: Q16_16;      // TS-029 (The Machine / Hardware failure prob)
+  human_entropy: Q16_16;     // TS-030 (The Human / Biological decay)
+  impact_severity: Q16_16;   // TS-031 (The Impact / Destruction scale)
+  outside_world: Q16_16;     // TS-032 (The Outside World / Ambient noise)
+  gravity_tensor: Q16_16;    // TS-033 (The dynamic weighting algorithm)
+}
+
+// ------------------------------------------------------------------------------
+// 4. THE INTEGRITY STATES (Sovereign Credit Scores)
+// ------------------------------------------------------------------------------
+table IntegrityStates {
+  ois: int8;       // TS-012 (Operational Integrity Score 0-100)
+  ocs: int8;       // TS-020 (Operational Compliance Score 0-100)
+  mcri: int8;      // TS-015 (Mission Compliance Risk Index 0-100)
+  gsr: int8;       // TS-017 (Grid Stability Regulation 0-100)
+  wqis: int8;      // TS-018 (Water Quality Index Score 0-100)
+  ssi: int8;       // TS-021 (Student/Operator Success Index 0-100)
+}
+
+// ------------------------------------------------------------------------------
+// 5. THE TEMPORAL HORIZONS (The Death Clocks)
+// ------------------------------------------------------------------------------
+table TemporalHorizons {
+  t_fail_ms: uint64;         // TS-023 (Milliseconds until physical destruction)
+  t_violation_ms: uint64;    // TS-024 (Milliseconds until legal compliance failure)
+  t_ttp_ms: uint64;          // TS-025 (The Tipping Point / Event Horizon)
+}
+
+// ------------------------------------------------------------------------------
+// 6. THE MASTER PODRICK PAYLOAD
+// ------------------------------------------------------------------------------
+// This is the root table. The C++ engine constructs this single block of memory
+// and passes the pointer to the Android UI.
+table PodrickState {
+  timestamp: uint64;                 // System clock time (Immutable Event Trail reference)
+  action: ActionCode = MONITOR;      // Current system action state
+  tensor: FoundationalTensor;        // Current Root Inputs
+  integrity: IntegrityStates;        // Current Health Scores
+  horizons: TemporalHorizons;        // Current Death Clocks
+
+  // The RAG Semantic Bridge
+  axiomq_briefing: string;           // TS-007 (The human-readable LLM explanation from llama.cpp)
+}
+
+// Define the root type for the FlatBuffer
+root_type PodrickState;
