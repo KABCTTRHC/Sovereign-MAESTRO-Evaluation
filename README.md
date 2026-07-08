@@ -31,6 +31,6 @@ To claim the allocation, you must submit an architectural proposal detailing exa
 ## Execution
 If you understand zero-copy data, deterministic compute, and high-frequency UI rendering, fork the repo. 
 
-Send your architectural approach and past infrastructure credentials to: `[Your Encrypted Email / Contact Method]`
+Send your architectural approach and past infrastructure credentials to: ' chest-totem@proton.me '
 
 Standard agency pitches and junior portfolios will be ignored.
